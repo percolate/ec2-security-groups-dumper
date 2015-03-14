@@ -1,0 +1,11 @@
+dependencies:
+  pre:
+    - pip install flake8
+
+test:
+  override:
+    - flake8:
+        parallel: true
+        files:
+          - ec2_security_groups_dumper/**/*.py
+    - ec2-security-groups-dumper --help
