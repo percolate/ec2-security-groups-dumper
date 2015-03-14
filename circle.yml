@@ -8,3 +8,5 @@ test:
         parallel: true
         files:
           - ec2_security_groups_dumper/**/*.py
+    - ec2-security-groups-dumper
+    - ec2-security-groups-dumper --help
