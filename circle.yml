@@ -4,4 +4,7 @@ dependencies:
 
 test:
   override:
-    - flake8 ec2_security_groups_dumper
+    - flake8:
+        parallel: true
+        files:
+          - ec2_security_groups_dumper/**/*.py

@@ -5,7 +5,7 @@ undevelop:
 	python setup.py develop --uninstall
 
 test:
-	nosetests
+	flake8 ec2_security_groups_dumper
 
 clean:
 	rm -rf ec2_security_groups_dumper.egg-info/
