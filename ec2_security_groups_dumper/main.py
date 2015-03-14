@@ -16,6 +16,7 @@ Options:
 Examples:
     ec2-security-groups-dumper --csv > path/to/ec2-security-groups.csv
     ec2-security-groups-dumper --json > path/to/your-firewall-backup.json
+
 """
 import boto
 import boto.ec2
