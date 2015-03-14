@@ -4,4 +4,4 @@ dependencies:
 
 test:
   override:
-    - flake8 ec2-security-groups-dumper
+    - flake8 ec2_security_groups_dumper
