@@ -31,3 +31,8 @@ Examples:
 ```bash
 $ pip install ec2-security-groups-dumper
 ```
+
+## See Also
+
+- [IAMer](https://github.com/percolate/iamer) to dump your IAM rules as INI and
+  JSON text files.
