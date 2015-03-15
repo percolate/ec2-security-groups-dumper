@@ -1,4 +1,8 @@
-# ec2-security-groups-dumper [![Circle CI](https://circleci.com/gh/percolate/ec2-security-groups-dumper.svg?style=svg)](https://circleci.com/gh/percolate/ec2-security-groups-dumper)
+# ec2-security-groups-dumper
+
+[![Circle CI](https://circleci.com/gh/percolate/ec2-security-groups-dumper.svg?style=svg)](https://circleci.com/gh/percolate/ec2-security-groups-dumper)
+[![Downloads](https://pypip.in/download/ec2-security-groups-dumper/badge.svg?period=month)](https://pypi.python.org/pypi/ec2-security-groups-dumper/)
+[![Latest Version](https://pypip.in/version/ec2-security-groups-dumper/badge.svg?text=version)](https://pypi.python.org/pypi/ec2-security-groups-dumper/)
 
 Dump your EC2 Security Groups as a CSV or JSON file
 
