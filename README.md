@@ -5,6 +5,7 @@
 [![Latest Version](https://pypip.in/version/ec2-security-groups-dumper/badge.svg?text=version)](https://pypi.python.org/pypi/ec2-security-groups-dumper/)
 
 Dump your EC2 Security Groups as a CSV or JSON file.
+
 Makes it possible to maintain your firewall rules in git.
 
 ## Quick Start
