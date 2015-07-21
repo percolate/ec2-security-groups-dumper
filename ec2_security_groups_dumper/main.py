@@ -148,7 +148,8 @@ class Firewall(object):
                                     rules_grants_cidr_ip=grant_row['cidr_ip'])
                                 list_of_rules.append(fr)
                             else:
-                                raise ValueError
+                                raise ValueError("Unsupported grant:",
+                                                 grant_row)
                     else:
                         fr = FirewallRule(
                             main_row['id'],
