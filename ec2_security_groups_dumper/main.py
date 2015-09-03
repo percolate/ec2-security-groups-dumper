@@ -124,18 +124,32 @@ class Firewall(object):
                 for rule_row in main_row['rules']:
                     if 'grants' in rule_row:
                         for grant_row in rule_row['grants']:
-                            if 'group_id' in grant_row and 'name' in grant_row:
+                            if 'group_id' in grant_row:
                                 # Set a var to not go over 80 chars
                                 group_id = grant_row['group_id']
+
+                                # Some VPC grants don't specify a name
+                                if 'name' in grant_row:
+                                    row_name = grant_row['name']
+                                else:
+                                    row_name = None
+
+                                # Some VPC grants specify -1 instead for the
+                                # ip_protocol instead of not declaring it
+                                if rule_row['ip_protocol'] == u'-1':
+                                    row_ip_protocol = None
+                                else:
+                                    row_ip_protocol = rule_row['ip_protocol']
+
                                 fr = FirewallRule(
                                     main_row['id'],
                                     main_row['name'],
                                     main_row['description'],
-                                    rules_ip_protocol=rule_row['ip_protocol'],
+                                    rules_ip_protocol=row_ip_protocol,
                                     rules_from_port=rule_row['from_port'],
                                     rules_to_port=rule_row['to_port'],
                                     rules_grants_group_id=group_id,
-                                    rules_grants_name=grant_row['name'])
+                                    rules_grants_name=row_name)
                                 list_of_rules.append(fr)
                             elif 'cidr_ip' in grant_row:
                                 fr = FirewallRule(
