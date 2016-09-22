@@ -293,3 +293,7 @@ def main():
         print firewall.json
     elif arguments['--csv']:
         print firewall.csv
+
+
+if __name__ == '__main__':
+    main()
