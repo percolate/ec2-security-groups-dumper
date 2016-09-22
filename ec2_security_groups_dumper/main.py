@@ -6,8 +6,8 @@ Useful to keep track of the firewall changes in git.
 Can also be used as a backup in case you lose some rules on EC2.
 
 Usage:
-    ec2-security-groups-dumper --json [--region=<region>] [--profile=<profile>]
-    ec2-security-groups-dumper --csv [--region=<region>] [--profile=<profile>]
+    ec2-security-groups-dumper --json [--region=<region>] [--profile=<profile>] [--vpc=<vpc>]
+    ec2-security-groups-dumper --csv [--region=<region>] [--profile=<profile>] [--vpc=<vpc>]
     ec2-security-groups-dumper (-h | --help)
 
 Options:
@@ -93,9 +93,12 @@ class FirewallRule(object):
 
 class Firewall(object):
 
-    def __init__(self, region=None, profile=None):
+    def __init__(self, region=None, profile=None, vpc=None):
         self.region = region
         self.profile = profile
+        self.filters = {}
+        if vpc is not None:
+            self.filters['vpc_id'] = [vpc]
         self.dict_rules = self._get_rules_from_aws()
 
     @property
@@ -252,7 +255,7 @@ class Firewall(object):
                                               profile_name=self.profile)
         else:
             conn = boto.connect_ec2(profile_name=self.profile)
-        security_groups = conn.get_all_security_groups()
+        security_groups = conn.get_all_security_groups(filters=self.filters)
         for group in security_groups:
             group_dict = dict()
             group_dict['id'] = group.id
@@ -303,7 +306,12 @@ def main():
     else:
         profile = None
 
-    firewall = Firewall(region=region, profile=profile)
+    if '--vpc' in arguments:
+        vpc = arguments['--vpc']
+    else:
+        vpc = None
+
+    firewall = Firewall(region=region, profile=profile, vpc=vpc)
 
     if arguments['--json']:
         print firewall.json
