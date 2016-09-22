@@ -18,8 +18,8 @@ Useful to keep track of the firewall changes in git.
 Can also be used as a backup in case you lose some rules on EC2.
 
 Usage:
-    ec2-security-groups-dumper --json
-    ec2-security-groups-dumper --csv
+    ec2-security-groups-dumper --json [--region=<region>] [--profile=<profile>]
+    ec2-security-groups-dumper --csv [--region=<region>] [--profile=<profile>]
     ec2-security-groups-dumper (-h | --help)
 
 Options:
