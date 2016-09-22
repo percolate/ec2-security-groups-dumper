@@ -54,7 +54,7 @@ class FirewallRule(object):
         assert isinstance(id, unicode), "Invalid id: {}".format(id)
         assert isinstance(name, unicode)
         assert isinstance(description, unicode)
-        assert rules_ip_protocol in (u'tcp', u'udp', u'icmp', None)
+        assert rules_ip_protocol in (u'tcp', u'udp', u'icmp', "-1", None)
         assert isinstance(rules_from_port, (unicode, NoneType))
         assert isinstance(rules_to_port, (unicode, NoneType))
         assert isinstance(rules_grants_group_id, (unicode, NoneType))
