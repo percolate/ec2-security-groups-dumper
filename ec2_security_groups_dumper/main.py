@@ -6,8 +6,8 @@ Useful to keep track of the firewall changes in git.
 Can also be used as a backup in case you lose some rules on EC2.
 
 Usage:
-    ec2-security-groups-dumper --json [--region=<region>]
-    ec2-security-groups-dumper --csv [--region=<region>]
+    ec2-security-groups-dumper --json [--region=<region>] [--profile=<profile>]
+    ec2-security-groups-dumper --csv [--region=<region>] [--profile=<profile>]
     ec2-security-groups-dumper (-h | --help)
 
 Options:
@@ -93,8 +93,9 @@ class FirewallRule(object):
 
 class Firewall(object):
 
-    def __init__(self, region=None):
+    def __init__(self, region=None, profile=None):
         self.region = region
+        self.profile = profile
         self.dict_rules = self._get_rules_from_aws()
 
     @property
@@ -247,9 +248,10 @@ class Firewall(object):
         list_of_rules = list()
 
         if self.region:
-            conn = boto.ec2.connect_to_region(region_name=self.region)
+            conn = boto.ec2.connect_to_region(region_name=self.region,
+                                              profile_name=self.profile)
         else:
-            conn = boto.connect_ec2()
+            conn = boto.connect_ec2(profile_name=self.profile)
         security_groups = conn.get_all_security_groups()
         for group in security_groups:
             group_dict = dict()
@@ -292,11 +294,16 @@ def main():
     arguments = docopt(__doc__)
 
     if '--region' in arguments:
-        region = region = arguments['--region']
+        region = arguments['--region']
     else:
         region = None
 
-    firewall = Firewall(region=region)
+    if '--profile' in arguments:
+        profile = arguments['--profile']
+    else:
+        profile = None
+
+    firewall = Firewall(region=region, profile=profile)
 
     if arguments['--json']:
         print firewall.json
