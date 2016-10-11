@@ -26,7 +26,7 @@ import json
 import csv
 from docopt import docopt
 import StringIO
-from types import NoneType
+from types import NoneType, StringType
 
 
 class FirewallRule(object):
@@ -109,6 +109,9 @@ class Firewall(object):
         if vpc is not None:
             self.filters['vpc_id'] = [vpc]
         self.dict_rules = self._get_rules_from_aws()
+
+        assert type(region) is StringType, "The region must be a string."
+        assert type(profile) is StringType, "The profile must be a string."
 
     @property
     def json(self):
