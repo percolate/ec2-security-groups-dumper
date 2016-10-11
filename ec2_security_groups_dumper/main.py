@@ -6,12 +6,13 @@ Useful to keep track of the firewall changes in git.
 Can also be used as a backup in case you lose some rules on EC2.
 
 Usage:
-    ec2-security-groups-dumper --json [--region=<region>] [--profile=<profile>] [--vpc=<vpc>]
-    ec2-security-groups-dumper --csv [--region=<region>] [--profile=<profile>] [--vpc=<vpc>]
+    ec2-security-groups-dumper (--json | --csv) [options]
     ec2-security-groups-dumper (-h | --help)
 
 Options:
-  -h --help     Show this screen.
+  -h --help                 Show this screen.
+  --region=<region>         Set an AWS region
+  --profile=<profile>       Set an AWS/Boto CLI profile
 
 Examples:
     ec2-security-groups-dumper --csv > path/to/ec2-security-groups.csv
@@ -94,6 +95,12 @@ class FirewallRule(object):
 class Firewall(object):
 
     def __init__(self, region=None, profile=None, vpc=None):
+        """Create a Firewall Object
+
+        Keyword arguments:
+        region -- the AWS region to be queried
+        profile --  the AWS profile to use
+        """
         self.region = region
         self.profile = profile
         self.filters = {}
