@@ -13,6 +13,7 @@ Options:
   -h --help                 Show this screen.
   --region=<region>         Set an AWS region
   --profile=<profile>       Set an AWS/Boto CLI profile
+  --vpc=<vpc>               Set a VPC ID to filter by
 
 Examples:
     ec2-security-groups-dumper --csv > path/to/ec2-security-groups.csv
@@ -100,6 +101,7 @@ class Firewall(object):
         Keyword arguments:
         region -- the AWS region to be queried
         profile --  the AWS profile to use
+        vpc -- the AWS VPC to filter by
         """
         self.region = region
         self.profile = profile
