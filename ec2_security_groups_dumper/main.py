@@ -112,6 +112,7 @@ class Firewall(object):
 
         assert type(region) is StringType, "The region must be a string."
         assert type(profile) is StringType, "The profile must be a string."
+        assert type(vpc) is StringType, "The vpc must be a string."
 
     @property
     def json(self):
