@@ -110,10 +110,12 @@ class Firewall(object):
             self.filters['vpc_id'] = [vpc]
         self.dict_rules = self._get_rules_from_aws()
 
-        assert type(region) is StringType or NoneType, "The region must be a string."
-        assert type(profile) is StringType or NoneType, "The profile must be a string."
-        assert type(vpc) is StringType or NoneType, "The vpc must be a string."
+        assert type(region) is StringType or NoneType, \
+            "The region must be a string."
+        assert type(profile) is StringType or NoneType, \
+            "The profile must be a string."
 
+        assert type(vpc) is StringType or NoneType, "The vpc must be a string."
     @property
     def json(self):
         """
