@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='ec2-security-groups-dumper',
-    version='1.3',
+    version='1.4',
     description='AWS EC2 Security Groups dump tool',
     url='https://github.com/percolate/ec2-security-groups-dumper',
     author='Laurent Raufaste',
