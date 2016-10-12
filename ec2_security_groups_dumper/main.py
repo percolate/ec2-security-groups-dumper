@@ -13,6 +13,7 @@ Options:
   -h --help                 Show this screen.
   --region=<region>         Set an AWS region
   --profile=<profile>       Set an AWS/Boto CLI profile
+  --vpc=<vpc>               Set a VPC ID to filter by
 
 Examples:
     ec2-security-groups-dumper --csv > path/to/ec2-security-groups.csv
@@ -94,21 +95,26 @@ class FirewallRule(object):
 
 class Firewall(object):
 
-    def __init__(self, region=None, profile=None):
+    def __init__(self, region=None, profile=None, vpc=None):
         """Create a Firewall Object
 
         Keyword arguments:
         region -- the AWS region to be queried
         profile --  the AWS profile to use
+        vpc -- the AWS VPC to filter by
         """
         self.region = region
         self.profile = profile
+        self.filters = {}
+        if vpc is not None:
+            self.filters['vpc_id'] = [vpc]
         self.dict_rules = self._get_rules_from_aws()
 
         assert type(region) is StringType or NoneType, \
             "The region must be a string."
         assert type(profile) is StringType or NoneType, \
             "The profile must be a string."
+        assert type(vpc) is StringType or NoneType, "The vpc must be a string."
 
     @property
     def json(self):
@@ -264,7 +270,7 @@ class Firewall(object):
                                               profile_name=self.profile)
         else:
             conn = boto.connect_ec2(profile_name=self.profile)
-        security_groups = conn.get_all_security_groups()
+        security_groups = conn.get_all_security_groups(filters=self.filters)
         for group in security_groups:
             group_dict = dict()
             group_dict['id'] = group.id
@@ -315,7 +321,12 @@ def main():
     else:
         profile = None
 
-    firewall = Firewall(region=region, profile=profile)
+    if '--vpc' in arguments:
+        vpc = arguments['--vpc']
+    else:
+        vpc = None
+
+    firewall = Firewall(region=region, profile=profile, vpc=vpc)
 
     if arguments['--json']:
         print firewall.json
