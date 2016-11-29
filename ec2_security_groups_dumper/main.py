@@ -154,18 +154,11 @@ class Firewall(object):
                                 else:
                                     row_name = None
 
-                                # Some VPC grants specify -1 instead for the
-                                # ip_protocol instead of not declaring it
-                                if rule_row['ip_protocol'] == u'-1':
-                                    row_ip_protocol = None
-                                else:
-                                    row_ip_protocol = rule_row['ip_protocol']
-
                                 fr = FirewallRule(
                                     main_row['id'],
                                     main_row['name'],
                                     main_row['description'],
-                                    rules_ip_protocol=row_ip_protocol,
+                                    rules_ip_protocol=rule_row['ip_protocol'],
                                     rules_from_port=rule_row['from_port'],
                                     rules_to_port=rule_row['to_port'],
                                     rules_grants_group_id=group_id,
