@@ -215,6 +215,7 @@ class Firewall(object):
         - id
         - name
         - description
+	- rules_direction
         - rules_ip_protocol
         - rules_from_port
         - rules_to_port
@@ -230,6 +231,7 @@ class Firewall(object):
         fieldnames = ['id',
                       'name',
                       'description',
+                      'rules_direction',
                       'rules_ip_protocol',
                       'rules_from_port',
                       'rules_to_port',
@@ -275,31 +277,46 @@ class Firewall(object):
                 group_dict['rules'] = list()
 
             for rule in group.rules:
-                rule_dict = dict()
-                rule_dict['ip_protocol'] = rule.ip_protocol
-                rule_dict['from_port'] = rule.from_port
-                rule_dict['to_port'] = rule.to_port
-
-                if rule.grants:
-                    rule_dict['grants'] = list()
-
-                for grant in rule.grants:
-                    grant_dict = dict()
-                    if grant.name:
-                        grant_dict['name'] = grant.name
-                    if grant.group_id:
-                        grant_dict['group_id'] = grant.group_id
-                    if grant.cidr_ip:
-                        grant_dict['cidr_ip'] = grant.cidr_ip
-
-                    rule_dict['grants'].append(grant_dict)
+		rule_dict = self._build_rule( rule )
+		rule_dict['direction']="INGRESS"
 
                 group_dict['rules'].append(rule_dict)
+
+            if group.rules_egress:
+                for rule in group.rules_egress:
+                    for rule in group.rules_egress:
+                        rule_dict = self._build_rule( rule )
+                        rule_dict['direction']="EGRESS"
+                        
+                        group_dict['rules'].append(rule_dict)
+
 
             list_of_rules.append(group_dict)
 
         return list_of_rules
 
+    def _build_rule(self, rule):
+        rule_dict = dict()
+	
+        rule_dict['ip_protocol'] = rule.ip_protocol
+        rule_dict['from_port'] = rule.from_port
+        rule_dict['to_port'] = rule.to_port
+
+        if rule.grants:
+            rule_dict['grants'] = list()
+
+            for grant in rule.grants:
+                grant_dict = dict()
+                if grant.name:
+                    grant_dict['name'] = grant.name
+                if grant.group_id:
+                    grant_dict['group_id'] = grant.group_id
+                if grant.cidr_ip:
+                    grant_dict['cidr_ip'] = grant.cidr_ip
+
+                rule_dict['grants'].append(grant_dict)
+
+        return rule_dict
 
 def main():
     arguments = docopt(__doc__)
