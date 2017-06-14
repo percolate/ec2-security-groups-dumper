@@ -35,6 +35,7 @@ class FirewallRule(object):
                  id,
                  name,
                  description,
+                 rules_direction=None,
                  rules_ip_protocol=None,
                  rules_from_port=None,
                  rules_to_port=None,
@@ -46,6 +47,7 @@ class FirewallRule(object):
             - id (unicode)
             - name (unicode)
             - description (unicode)
+            - rules_direction (unicode)
             - rules_ip_protocol (unicode)
             - rules_from_port (unicode)
             - rules_to_port (unicode)
@@ -56,6 +58,7 @@ class FirewallRule(object):
         assert isinstance(id, unicode), "Invalid id: {}".format(id)
         assert isinstance(name, unicode)
         assert isinstance(description, unicode)
+        assert rules_direction in ('INGRESS', 'EGRESS', None)
         assert rules_ip_protocol in (u'tcp', u'udp', u'icmp', "-1", None)
         assert isinstance(rules_from_port, (unicode, NoneType))
         assert isinstance(rules_to_port, (unicode, NoneType))
@@ -66,6 +69,7 @@ class FirewallRule(object):
         self.id = id
         self.name = name
         self.description = description
+        self.rules_direction = rules_direction
         self.rules_ip_protocol = rules_ip_protocol
         self.rules_from_port = rules_from_port
         self.rules_to_port = rules_to_port
@@ -82,6 +86,7 @@ class FirewallRule(object):
             'id': self.id,
             'name': self.name,
             'description': self.description,
+            'rules_direction': self.rules_direction,
             'rules_ip_protocol': self.rules_ip_protocol,
             'rules_from_port': self.rules_from_port,
             'rules_to_port': self.rules_to_port,
@@ -158,6 +163,7 @@ class Firewall(object):
                                     main_row['id'],
                                     main_row['name'],
                                     main_row['description'],
+                                    rules_direction=rule_row['direction'],
                                     rules_ip_protocol=rule_row['ip_protocol'],
                                     rules_from_port=rule_row['from_port'],
                                     rules_to_port=rule_row['to_port'],
@@ -169,6 +175,7 @@ class Firewall(object):
                                     main_row['id'],
                                     main_row['name'],
                                     main_row['description'],
+                                    rules_direction=rule_row['direction'],
                                     rules_ip_protocol=rule_row['ip_protocol'],
                                     rules_from_port=rule_row['from_port'],
                                     rules_to_port=rule_row['to_port'],
@@ -182,6 +189,7 @@ class Firewall(object):
                             main_row['id'],
                             main_row['name'],
                             main_row['description'],
+                            rules_direction=rule_row['direction'],
                             rules_ip_protocol=rule_row['ip_protocol'],
                             rules_from_port=rule_row['from_port'],
                             rules_to_port=rule_row['to_port'])
@@ -197,6 +205,7 @@ class Firewall(object):
                              key=lambda fr: (fr.id,
                                              fr.name,
                                              fr.description,
+                                             fr.rules_direction,
                                              fr.rules_ip_protocol,
                                              fr.rules_from_port,
                                              fr.rules_to_port,
@@ -284,11 +293,10 @@ class Firewall(object):
 
             if group.rules_egress:
                 for rule in group.rules_egress:
-                    for rule in group.rules_egress:
-                        rule_dict = self._build_rule( rule )
-                        rule_dict['direction']="EGRESS"
+                    rule_dict = self._build_rule( rule )
+                    rule_dict['direction']="EGRESS"
                         
-                        group_dict['rules'].append(rule_dict)
+                    group_dict['rules'].append(rule_dict)
 
 
             list_of_rules.append(group_dict)
