@@ -286,17 +286,16 @@ class Firewall(object):
                 group_dict['rules'] = list()
 
             for rule in group.rules:
-                rule_dict = self._build_rule( rule )
-                rule_dict['direction']="INGRESS"
+                rule_dict = self._build_rule(rule)
+                rule_dict['direction'] = "INGRESS"
 
                 group_dict['rules'].append(rule_dict)
 
             for rule in group.rules_egress:
-                rule_dict = self._build_rule( rule )
-                rule_dict['direction']="EGRESS"
+                rule_dict = self._build_rule(rule)
+                rule_dict['direction'] = "EGRESS"
 
                 group_dict['rules'].append(rule_dict)
-
 
             list_of_rules.append(group_dict)
 
@@ -324,6 +323,7 @@ class Firewall(object):
                 rule_dict['grants'].append(grant_dict)
 
         return rule_dict
+
 
 def main():
     arguments = docopt(__doc__)
