@@ -224,7 +224,7 @@ class Firewall(object):
         - id
         - name
         - description
-	- rules_direction
+        - rules_direction
         - rules_ip_protocol
         - rules_from_port
         - rules_to_port
@@ -282,21 +282,20 @@ class Firewall(object):
             if group.description:
                 group_dict['description'] = group.description
 
-            if group.rules:
+            if group.rules or group.rules_egress:
                 group_dict['rules'] = list()
 
             for rule in group.rules:
-		rule_dict = self._build_rule( rule )
-		rule_dict['direction']="INGRESS"
+                rule_dict = self._build_rule( rule )
+                rule_dict['direction']="INGRESS"
 
                 group_dict['rules'].append(rule_dict)
 
-            if group.rules_egress:
-                for rule in group.rules_egress:
-                    rule_dict = self._build_rule( rule )
-                    rule_dict['direction']="EGRESS"
-                        
-                    group_dict['rules'].append(rule_dict)
+            for rule in group.rules_egress:
+                rule_dict = self._build_rule( rule )
+                rule_dict['direction']="EGRESS"
+
+                group_dict['rules'].append(rule_dict)
 
 
             list_of_rules.append(group_dict)
@@ -305,7 +304,7 @@ class Firewall(object):
 
     def _build_rule(self, rule):
         rule_dict = dict()
-	
+
         rule_dict['ip_protocol'] = rule.ip_protocol
         rule_dict['from_port'] = rule.from_port
         rule_dict['to_port'] = rule.to_port
