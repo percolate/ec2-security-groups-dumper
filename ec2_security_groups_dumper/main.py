@@ -20,8 +20,7 @@ Examples:
     ec2-security-groups-dumper --json > path/to/your-firewall-backup.json
 
 """
-import boto
-import boto.ec2
+import boto3
 import json
 import csv
 from docopt import docopt
@@ -41,7 +40,8 @@ class FirewallRule(object):
                  rules_to_port=None,
                  rules_grants_group_id=None,
                  rules_grants_name=None,
-                 rules_grants_cidr_ip=None):
+                 rules_grants_cidr_ip=None,
+                 rules_description=None):
         """
         Args:
             - id (unicode)
@@ -54,18 +54,20 @@ class FirewallRule(object):
             - rules_grants_group_id (unicode)
             - rules_grants_name (unicode)
             - rules_grants_cidr_ip (unicode)
+            - rules_description (unicode)
         """
-        assert isinstance(id, unicode), "Invalid id: {}".format(id)
-        assert isinstance(name, unicode)
-        assert isinstance(description, unicode)
+        assert isinstance(id, str), "Invalid id: {}".format(id)
+        assert isinstance(name, str)
+        assert isinstance(description, str)
         assert rules_direction in ('INGRESS', 'EGRESS', None)
         assert rules_ip_protocol in (
             u'tcp', u'udp', u'icmp', u'icmpv6', "-1", None)
-        assert isinstance(rules_from_port, (unicode, NoneType))
-        assert isinstance(rules_to_port, (unicode, NoneType))
-        assert isinstance(rules_grants_group_id, (unicode, NoneType))
-        assert isinstance(rules_grants_name, (unicode, NoneType))
-        assert isinstance(rules_grants_cidr_ip, (unicode, NoneType))
+        assert isinstance(rules_from_port, (int, NoneType))
+        assert isinstance(rules_to_port, (int, NoneType))
+        assert isinstance(rules_grants_group_id, (str, NoneType))
+        assert isinstance(rules_grants_name, (str, NoneType))
+        assert isinstance(rules_grants_cidr_ip, (str, NoneType))
+        assert isinstance(rules_description, (str, NoneType))
 
         self.id = id
         self.name = name
@@ -77,6 +79,7 @@ class FirewallRule(object):
         self.rules_grants_group_id = rules_grants_group_id
         self.rules_grants_name = rules_grants_name
         self.rules_grants_cidr_ip = rules_grants_cidr_ip
+        self.rules_description = rules_description
 
     def as_dict(self):
         """
@@ -93,7 +96,8 @@ class FirewallRule(object):
             'rules_to_port': self.rules_to_port,
             'rules_grants_group_id': self.rules_grants_group_id,
             'rules_grants_name': self.rules_grants_name,
-            'rules_grants_cidr_ip': self.rules_grants_cidr_ip
+            'rules_grants_cidr_ip': self.rules_grants_cidr_ip,
+            'rules_description': self.rules_description
         }
 
         return dict_fw
@@ -111,9 +115,13 @@ class Firewall(object):
         """
         self.region = region
         self.profile = profile
-        self.filters = {}
+        self.filters = list()
         if vpc is not None:
-            self.filters['vpc_id'] = [vpc]
+            vpc_filter = {
+                'Name': 'vpc-id',
+                'Values': [vpc]
+            }
+            self.filters.append(vpc_filter)
         self.dict_rules = self._get_rules_from_aws()
 
         assert type(region) is StringType or NoneType, \
@@ -169,7 +177,9 @@ class Firewall(object):
                                     rules_from_port=rule_row['from_port'],
                                     rules_to_port=rule_row['to_port'],
                                     rules_grants_group_id=group_id,
-                                    rules_grants_name=row_name)
+                                    rules_grants_name=row_name,
+                                    rules_description=grant_row['description'])
+
                                 list_of_rules.append(fr)
                             elif 'cidr_ip' in grant_row:
                                 fr = FirewallRule(
@@ -180,7 +190,8 @@ class Firewall(object):
                                     rules_ip_protocol=rule_row['ip_protocol'],
                                     rules_from_port=rule_row['from_port'],
                                     rules_to_port=rule_row['to_port'],
-                                    rules_grants_cidr_ip=grant_row['cidr_ip'])
+                                    rules_grants_cidr_ip=grant_row['cidr_ip'],
+                                    rules_description=grant_row['description'])
                                 list_of_rules.append(fr)
                             else:
                                 raise ValueError("Unsupported grant:",
@@ -247,7 +258,8 @@ class Firewall(object):
                       'rules_to_port',
                       'rules_grants_group_id',
                       'rules_grants_name',
-                      'rules_grants_cidr_ip']
+                      'rules_grants_cidr_ip',
+                      'rules_description']
         writer = csv.DictWriter(output, fieldnames=fieldnames)
         writer.writeheader()
         for fr in self.rules:
@@ -270,29 +282,32 @@ class Firewall(object):
         """
         list_of_rules = list()
 
-        if self.region:
-            conn = boto.ec2.connect_to_region(region_name=self.region,
-                                              profile_name=self.profile)
-        else:
-            conn = boto.connect_ec2(profile_name=self.profile)
-        security_groups = conn.get_all_security_groups(filters=self.filters)
-        for group in security_groups:
-            group_dict = dict()
-            group_dict['id'] = group.id
-            group_dict['name'] = group.name
-            if group.description:
-                group_dict['description'] = group.description
+        if self.profile:
+            boto3.setup_default_session(profile_name=self.profile)
 
-            if group.rules or group.rules_egress:
+        if self.region:
+            ec2 = boto3.client('ec2', region_name=self.region)
+        else:
+            ec2 = boto3.client('ec2')
+
+        security_groups = ec2.describe_security_groups(Filters=self.filters)
+
+        for group in security_groups['SecurityGroups']:
+            group_dict = dict()
+            group_dict['id'] = group['GroupId']
+            group_dict['name'] = group['GroupName']
+            group_dict['description'] = group.get('Description', None)
+
+            if group.get('IpPermissions', None) or group.get('IpPermissionsEgress', None):
                 group_dict['rules'] = list()
 
-            for rule in group.rules:
+            for rule in group.get('IpPermissions', None):
                 rule_dict = self._build_rule(rule)
                 rule_dict['direction'] = "INGRESS"
 
                 group_dict['rules'].append(rule_dict)
 
-            for rule in group.rules_egress:
+            for rule in group.get('IpPermissionsEgress', None):
                 rule_dict = self._build_rule(rule)
                 rule_dict['direction'] = "EGRESS"
 
@@ -305,23 +320,25 @@ class Firewall(object):
     def _build_rule(self, rule):
         rule_dict = dict()
 
-        rule_dict['ip_protocol'] = rule.ip_protocol
-        rule_dict['from_port'] = rule.from_port
-        rule_dict['to_port'] = rule.to_port
+        rule_dict['ip_protocol'] = rule['IpProtocol']
+        rule_dict['from_port'] = rule.get('FromPort', -2)
+        rule_dict['to_port'] = rule.get('ToPort', -2)
 
-        if rule.grants:
-            rule_dict['grants'] = list()
+        rule_dict['grants'] = list()
 
-            for grant in rule.grants:
-                grant_dict = dict()
-                if grant.name:
-                    grant_dict['name'] = grant.name
-                if grant.group_id:
-                    grant_dict['group_id'] = grant.group_id
-                if grant.cidr_ip:
-                    grant_dict['cidr_ip'] = grant.cidr_ip
+        for grant in rule.get('IpRanges')+rule.get('Ipv6Ranges')+rule.get('UserIdGroupPairs'):
+            grant_dict = dict()
+            grant_dict['name'] = grant.get('Description', None)
+            grant_dict['description'] = grant.get('Description', None)
+            if grant.get('GroupId', None):
+                grant_dict['group_id'] = grant.get('GroupId', None)
 
-                rule_dict['grants'].append(grant_dict)
+            if 'CidrIp' in grant.keys():
+                grant_dict['cidr_ip'] = grant.get('CidrIp')
+            elif 'CidrIpv6' in grant.keys():
+                grant_dict['cidr_ip'] = grant.get('CidrIpv6')
+
+            rule_dict['grants'].append(grant_dict)
 
         return rule_dict
 
