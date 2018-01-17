@@ -44,17 +44,17 @@ class FirewallRule(object):
                  rules_description=None):
         """
         Args:
-            - id (unicode)
-            - name (unicode)
-            - description (unicode)
-            - rules_direction (unicode)
-            - rules_ip_protocol (unicode)
-            - rules_from_port (unicode)
-            - rules_to_port (unicode)
-            - rules_grants_group_id (unicode)
-            - rules_grants_name (unicode)
-            - rules_grants_cidr_ip (unicode)
-            - rules_description (unicode)
+            - id (str)
+            - name (str)
+            - description (str)
+            - rules_direction (str)
+            - rules_ip_protocol (str)
+            - rules_from_port (int)
+            - rules_to_port (int)
+            - rules_grants_group_id (str)
+            - rules_grants_name (str)
+            - rules_grants_cidr_ip (str)
+            - rules_description (str)
         """
         assert isinstance(id, str), "Invalid id: {}".format(id)
         assert isinstance(name, str)
@@ -243,6 +243,7 @@ class Firewall(object):
         - rules_grants_group_id
         - rules_grants_name
         - rules_grants_cidr_ip
+        - rules_description
 
         Returns:
             str
