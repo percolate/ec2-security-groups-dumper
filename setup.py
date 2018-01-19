@@ -3,16 +3,16 @@ from setuptools import setup
 
 setup(
     name='ec2-security-groups-dumper',
-    version='1.7.1',
+    version='1.8.0',
     description='AWS EC2 Security Groups dump tool',
     url='https://github.com/percolate/ec2-security-groups-dumper',
     author='Laurent Raufaste',
     author_email='analogue@glop.org',
     license='GPLv3',
-    keywords='aws ec2 firewall boto',
+    keywords='aws ec2 firewall boto3',
     packages=['ec2_security_groups_dumper'],
     install_requires=[
-        'boto',
+        'boto3',
         'docopt'
     ],
     entry_points={
