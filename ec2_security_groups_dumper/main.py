@@ -299,7 +299,8 @@ class Firewall(object):
             group_dict['name'] = group['GroupName']
             group_dict['description'] = group.get('Description', None)
 
-            if group.get('IpPermissions', None) or group.get('IpPermissionsEgress', None):
+            if (group.get('IpPermissions', None) or
+                    group.get('IpPermissionsEgress', None)):
                 group_dict['rules'] = list()
 
             for rule in group.get('IpPermissions', None):
@@ -327,7 +328,9 @@ class Firewall(object):
 
         rule_dict['grants'] = list()
 
-        for grant in rule.get('IpRanges')+rule.get('Ipv6Ranges')+rule.get('UserIdGroupPairs'):
+        for grant in (rule.get('IpRanges')
+                      + rule.get('Ipv6Ranges')
+                      + rule.get('UserIdGroupPairs')):
             grant_dict = dict()
             grant_dict['name'] = grant.get('Description', None)
             grant_dict['description'] = grant.get('Description', None)
