@@ -61,7 +61,7 @@ class FirewallRule(object):
         assert isinstance(description, str)
         assert rules_direction in ('INGRESS', 'EGRESS', None)
         assert rules_ip_protocol in (
-            u'tcp', u'udp', u'icmp', u'icmpv6', "-1", None)
+            u'tcp', u'udp', u'icmp', u'icmpv6', "4", "50", "-1", None)
         assert isinstance(rules_from_port, (int, NoneType))
         assert isinstance(rules_to_port, (int, NoneType))
         assert isinstance(rules_grants_group_id, (str, NoneType))
