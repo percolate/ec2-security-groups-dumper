@@ -24,7 +24,10 @@ import boto3
 import json
 import csv
 from docopt import docopt
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from types import NoneType, StringType
 
 
