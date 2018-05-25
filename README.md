@@ -33,7 +33,7 @@ Examples:
 ## Install
 
 ```bash
-$ pip install ec2-security-groups-dumper
+pip install ec2-security-groups-dumper
 ```
 
 ## See Also

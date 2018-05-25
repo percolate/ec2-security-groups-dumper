@@ -368,9 +368,9 @@ def main():
     firewall = Firewall(region=region, profile=profile, vpc=vpc)
 
     if arguments['--json']:
-        print firewall.json
+        print(firewall.json)
     elif arguments['--csv']:
-        print firewall.csv
+        print(firewall.csv)
 
 
 if __name__ == '__main__':
