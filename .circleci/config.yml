@@ -1,0 +1,52 @@
+version: 2
+
+workflows:
+  version: 2
+  ec2-security-groups-dumper:
+    jobs:
+      - mdl
+      - flake8-py2
+      - flake8
+      - cli-py2
+      - cli
+
+jobs:
+
+  mdl:
+    docker:
+      - image: rsrchboy/mdl
+    steps:
+      - checkout
+      - run: mdl .
+
+  flake8-py2:
+    docker:
+      - image: python:2
+    steps:
+      - run: pip install flake8
+      - checkout
+      - run: flake8
+
+  flake8:
+    docker:
+      - image: python
+    steps:
+      - run: pip install flake8
+      - checkout
+      - run: flake8
+
+  cli-py2:
+    docker:
+      - image: python:2
+    steps:
+      - checkout
+      - run: python setup.py install
+      - run: ec2-security-groups-dumper --help
+
+  cli:
+    docker:
+      - image: python
+    steps:
+      - checkout
+      - run: python setup.py install
+      - run: ec2-security-groups-dumper --help
