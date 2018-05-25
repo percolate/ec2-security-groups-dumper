@@ -28,7 +28,6 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
-from types import StringType
 
 
 class FirewallRule(object):
@@ -127,11 +126,11 @@ class Firewall(object):
             self.filters.append(vpc_filter)
         self.dict_rules = self._get_rules_from_aws()
 
-        assert type(region) is StringType or type(None), \
+        assert isinstance(region, (str, type(None))), \
             "The region must be a string."
-        assert type(profile) is StringType or type(None), \
+        assert isinstance(profile, (str, type(None))), \
             "The profile must be a string."
-        assert type(vpc) is StringType or type(None), \
+        assert isinstance(vpc, (str, type(None))), \
             "The vpc must be a string."
 
     @property
