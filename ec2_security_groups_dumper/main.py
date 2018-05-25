@@ -28,7 +28,7 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
-from types import NoneType, StringType
+from types import StringType
 
 
 class FirewallRule(object):
@@ -65,12 +65,12 @@ class FirewallRule(object):
         assert rules_direction in ('INGRESS', 'EGRESS', None)
         assert rules_ip_protocol in (
             u'tcp', u'udp', u'icmp', u'icmpv6', "-1", None)
-        assert isinstance(rules_from_port, (int, NoneType))
-        assert isinstance(rules_to_port, (int, NoneType))
-        assert isinstance(rules_grants_group_id, (str, NoneType))
-        assert isinstance(rules_grants_name, (str, NoneType))
-        assert isinstance(rules_grants_cidr_ip, (str, NoneType))
-        assert isinstance(rules_description, (str, NoneType))
+        assert isinstance(rules_from_port, (int, type(None)))
+        assert isinstance(rules_to_port, (int, type(None)))
+        assert isinstance(rules_grants_group_id, (str, type(None)))
+        assert isinstance(rules_grants_name, (str, type(None)))
+        assert isinstance(rules_grants_cidr_ip, (str, type(None)))
+        assert isinstance(rules_description, (str, type(None)))
 
         self.id = id
         self.name = name
@@ -127,11 +127,12 @@ class Firewall(object):
             self.filters.append(vpc_filter)
         self.dict_rules = self._get_rules_from_aws()
 
-        assert type(region) is StringType or NoneType, \
+        assert type(region) is StringType or type(None), \
             "The region must be a string."
-        assert type(profile) is StringType or NoneType, \
+        assert type(profile) is StringType or type(None), \
             "The profile must be a string."
-        assert type(vpc) is StringType or NoneType, "The vpc must be a string."
+        assert type(vpc) is StringType or type(None), \
+            "The vpc must be a string."
 
     @property
     def json(self):
