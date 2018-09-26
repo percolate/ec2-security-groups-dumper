@@ -217,16 +217,16 @@ class Firewall(object):
 
         # Sort the data in order to get a consistent output
         sorted_list = sorted(list_of_rules,
-                             key=lambda fr: (fr.id,
-                                             fr.name,
-                                             fr.description,
-                                             fr.rules_direction,
-                                             fr.rules_ip_protocol,
-                                             fr.rules_from_port,
-                                             fr.rules_to_port,
-                                             fr.rules_grants_group_id,
-                                             fr.rules_grants_name,
-                                             fr.rules_grants_cidr_ip))
+                             key=lambda fr: (str(fr.id),
+                                             str(fr.name),
+                                             str(fr.description),
+                                             str(fr.rules_direction),
+                                             str(fr.rules_ip_protocol),
+                                             str(fr.rules_from_port),
+                                             str(fr.rules_to_port),
+                                             str(fr.rules_grants_group_id),
+                                             str(fr.rules_grants_name),
+                                             str(fr.rules_grants_cidr_ip)))
 
         return sorted_list
 
