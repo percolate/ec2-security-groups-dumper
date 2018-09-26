@@ -27,7 +27,7 @@ from docopt import docopt
 try:
     from StringIO import StringIO
 except ImportError:
-    from io import StringIO
+    import io as StringIO
 
 
 class FirewallRule(object):
