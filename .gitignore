@@ -1,3 +1,4 @@
 *.pyc
 /ec2_security_groups_dumper.egg-info/
 /dist/
+/.python-version
