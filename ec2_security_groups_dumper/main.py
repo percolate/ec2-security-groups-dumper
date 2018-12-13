@@ -25,7 +25,7 @@ import json
 import csv
 from docopt import docopt
 try:
-    from StringIO import StringIO
+    import StringIO
 except ImportError:
     import io as StringIO
 
