@@ -350,7 +350,6 @@ class Firewall(object):
             grant_dict = dict()
             grant_dict['name'] = grant.get('Description', None)
             grant_dict['description'] = grant.get('Description', None)
-            grant_dict['vpc_id'] = grant.get('VpcId', None)
             if grant.get('GroupId', None):
                 grant_dict['group_id'] = grant.get('GroupId', None)
 
