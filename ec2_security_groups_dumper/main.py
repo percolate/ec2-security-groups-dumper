@@ -25,9 +25,9 @@ import json
 import csv
 from docopt import docopt
 try:
-    import StringIO
+    import StringIO # Python 2
 except ImportError:
-    import io as StringIO
+    import io as StringIO # Python 3
 
 
 class FirewallRule(object):
