@@ -36,6 +36,7 @@ class FirewallRule(object):
                  id,
                  name,
                  description,
+                 vpc_id,
                  rules_direction=None,
                  rules_ip_protocol=None,
                  rules_from_port=None,
@@ -49,6 +50,7 @@ class FirewallRule(object):
             - id (str)
             - name (str)
             - description (str)
+            - vpc_id (str)
             - rules_direction (str)
             - rules_ip_protocol (str)
             - rules_from_port (int)
@@ -61,6 +63,7 @@ class FirewallRule(object):
         assert isinstance(id, str), "Invalid id: {}".format(id)
         assert isinstance(name, str)
         assert isinstance(description, str)
+        assert isinstance(vpc_id, str)
         assert rules_direction in ('INGRESS', 'EGRESS', None)
         assert rules_ip_protocol in (
             u'tcp', u'udp', u'icmp', u'icmpv6', "-1", None)
@@ -74,6 +77,7 @@ class FirewallRule(object):
         self.id = id
         self.name = name
         self.description = description
+        self.vpc_id = vpc_id
         self.rules_direction = rules_direction
         self.rules_ip_protocol = rules_ip_protocol
         self.rules_from_port = rules_from_port
@@ -92,6 +96,7 @@ class FirewallRule(object):
             'id': self.id,
             'name': self.name,
             'description': self.description,
+            'vpc_id': self.vpc_id,
             'rules_direction': self.rules_direction,
             'rules_ip_protocol': self.rules_ip_protocol,
             'rules_from_port': self.rules_from_port,
@@ -175,6 +180,7 @@ class Firewall(object):
                                     main_row['id'],
                                     main_row['name'],
                                     main_row['description'],
+                                    main_row['vpc_id'],
                                     rules_direction=rule_row['direction'],
                                     rules_ip_protocol=rule_row['ip_protocol'],
                                     rules_from_port=rule_row['from_port'],
@@ -189,6 +195,7 @@ class Firewall(object):
                                     main_row['id'],
                                     main_row['name'],
                                     main_row['description'],
+                                    main_row['vpc_id'],
                                     rules_direction=rule_row['direction'],
                                     rules_ip_protocol=rule_row['ip_protocol'],
                                     rules_from_port=rule_row['from_port'],
@@ -204,6 +211,7 @@ class Firewall(object):
                             main_row['id'],
                             main_row['name'],
                             main_row['description'],
+                            main_row['vpc_id'],
                             rules_direction=rule_row['direction'],
                             rules_ip_protocol=rule_row['ip_protocol'],
                             rules_from_port=rule_row['from_port'],
@@ -212,7 +220,8 @@ class Firewall(object):
             else:
                 fr = FirewallRule(main_row['id'],
                                   main_row['name'],
-                                  main_row['description'])
+                                  main_row['description'],
+                                  main_row['vpc_id'])
                 list_of_rules.append(fr)
 
         # Sort the data in order to get a consistent output
@@ -220,6 +229,7 @@ class Firewall(object):
                              key=lambda fr: (str(fr.id),
                                              str(fr.name),
                                              str(fr.description),
+                                             str(fr.vpc_id),
                                              str(fr.rules_direction),
                                              str(fr.rules_ip_protocol),
                                              str(fr.rules_from_port),
@@ -239,6 +249,7 @@ class Firewall(object):
         - id
         - name
         - description
+        - vpc
         - rules_direction
         - rules_ip_protocol
         - rules_from_port
@@ -256,6 +267,7 @@ class Firewall(object):
         fieldnames = ['id',
                       'name',
                       'description',
+                      'vpc_id',
                       'rules_direction',
                       'rules_ip_protocol',
                       'rules_from_port',
@@ -301,6 +313,7 @@ class Firewall(object):
             group_dict['id'] = group['GroupId']
             group_dict['name'] = group['GroupName']
             group_dict['description'] = group.get('Description', None)
+            group_dict['vpc_id'] = group.get('VpcId', None)
 
             if (group.get('IpPermissions', None) or
                     group.get('IpPermissionsEgress', None)):
@@ -337,6 +350,7 @@ class Firewall(object):
             grant_dict = dict()
             grant_dict['name'] = grant.get('Description', None)
             grant_dict['description'] = grant.get('Description', None)
+            grant_dict['vpc_id'] = grant.get('VpcId', None)
             if grant.get('GroupId', None):
                 grant_dict['group_id'] = grant.get('GroupId', None)
 
