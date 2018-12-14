@@ -313,7 +313,7 @@ class Firewall(object):
             group_dict['id'] = group['GroupId']
             group_dict['name'] = group['GroupName']
             group_dict['description'] = group.get('Description', None)
-            group_dict['vpc_id'] = group.get('VpcId', None)
+            group_dict['vpc_id'] = group.get('VpcId', "")
 
             if (group.get('IpPermissions', None) or
                     group.get('IpPermissionsEgress', None)):
